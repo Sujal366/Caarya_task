@@ -11,10 +11,8 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [bookmarks, setBookmarks] = useState([]);
   
-  const categories = [
-    "All",
-    ...new Set(bookmarks.map((b) => b.category || "Uncategorized")),
-  ];
+  const [categories, setCategories] = useState(["Work", "Personal"]);
+
 
   const filteredBookmarks =
     selectedCategory === "All"
@@ -33,6 +31,10 @@ function App() {
       category: data.category,
     });
     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+    setBookmarks(bookmarks);
+    if (data.category && !categories.includes(data.category)) {
+      setCategories((prev) => [...prev, data.category]);
+    }
     setData({});
     setPopup(false);
   };
@@ -46,7 +48,6 @@ function App() {
 
   return (
     <section className="flex flex-col items-center justify-start w-full h-screen">
-
       {/* // Header Section */}
       <div className="flex items-center justify-between w-full border-b-2 border-gray-200 p-4">
         <h1 className="text-4xl font-bold text-blue-400">Bookmark App</h1>
@@ -71,7 +72,7 @@ function App() {
 
       {/* Category Buttons */}
       <div className="flex gap-2 flex-wrap justify-center my-4">
-        {filteredBookmarks.length !== 0 && categories.map((cat) => (
+        {["All", ...categories].map((cat) => (
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
@@ -105,6 +106,7 @@ function App() {
           setPopup={setPopup}
           addNewBookmark={addNewBookmark}
           categories={categories}
+          setCategories={setCategories}
         />
       )}
     </section>

@@ -1,6 +1,10 @@
+import { useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 
-const Popup = ({ data, setData, setPopup, addNewBookmark, categories }) => {
+const Popup = ({ data, setData, setPopup, addNewBookmark, categories, setCategories }) => {
+  const [newCategory, setNewCategory] = useState("");
+  const [showNewInput, setShowNewInput] = useState(false);
+
   return (
     <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 shadow-lg  rounded-lg w-96 h-auto">
       <h2 className="text-xl font-semibold text-blue-400">Add Bookmark</h2>
@@ -41,16 +45,51 @@ const Popup = ({ data, setData, setPopup, addNewBookmark, categories }) => {
         />
         <select
           value={data.category}
-          onChange={(e) => setData({ ...data, category: e.target.value })}
+          onChange={(e) => {
+            if (e.target.value === "__new__") {
+              setShowNewInput(true);
+            } else {
+              setData({ ...data, category: e.target.value });
+            }
+          }}
           className="border border-black p-2 rounded w-full mb-2 text-black"
         >
           <option value="">Select Category</option>
-          {categories.map((cat, id) => (
-            <option key={id} value={cat}>
-              {cat}
-            </option>
-          ))}
+          {categories
+            .filter((cat) => cat !== "All")
+            .map((cat, i) => (
+              <option key={i} value={cat}>
+                {cat}
+              </option>
+            ))}
+          <option value="__new__">+ Add New Category</option>
         </select>
+        {showNewInput && (
+          <div className="mt-2 flex gap-2">
+            <input
+              type="text"
+              placeholder="New category name"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              className="flex-1 border border-gray-300 px-3 py-2 rounded-md text-black"
+            />
+            <button
+              className="bg-blue-600 text-white px-3 py-2 rounded-md"
+              onClick={() => {
+                const trimmed = newCategory.trim();
+                if (trimmed && !categories.includes(trimmed)) {
+                  setCategories((prev) => [...prev, trimmed]);
+                }
+                setData({ ...data, category: trimmed });
+                setNewCategory("");
+                setShowNewInput(false);
+              }}
+            >
+              Add
+            </button>
+          </div>
+        )}
+
         <button
           value="Add Bookmark"
           className="text-white p-2 rounded w-full cursor-pointer bg-blue-500 hover:bg-blue-600 "
