@@ -10,14 +10,23 @@ function App() {
   const [data, setData] = useState({});
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [bookmarks, setBookmarks] = useState([]);
-  
   const [categories, setCategories] = useState(["Work", "Personal"]);
+  const [searchQuery, setSearchQuery] = useState("");
 
 
-  const filteredBookmarks =
-    selectedCategory === "All"
-      ? bookmarks
-      : bookmarks.filter((b) => b.category === selectedCategory);
+  const filteredBookmarks = bookmarks.filter((b) => {
+    const inCategory =
+      selectedCategory === "All" || b.category === selectedCategory;
+
+    const matchesSearch =
+      b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      b.notes.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (b.tags || []).some((tag) =>
+        tag.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+    return inCategory && matchesSearch;
+  });
 
 
   const addNewBookmark = () => {
@@ -44,7 +53,7 @@ function App() {
     if (stored) {
       setBookmarks(JSON.parse(stored));
     }
-  }, [popup]); // re-run when popup closes (after adding)
+  }, [popup]);
 
   return (
     <section className="flex flex-col items-center justify-start w-full h-screen">
@@ -58,6 +67,8 @@ function App() {
               type="search"
               placeholder="Search..."
               className="outline-none"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <button
