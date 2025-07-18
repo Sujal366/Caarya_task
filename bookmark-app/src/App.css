@@ -5,3 +5,29 @@
   text-align: center;
   width: 100%;
 }
+
+.exportbtn__popup:after, .share-window:before{
+position: absolute;
+content: " ";
+width: 0;
+height: 0;
+bottom: 100%;
+right: 10%;
+}
+
+.exportbtn__popup:after{
+  /* bottom: 100%; */
+  border-top: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid rgba(249, 251, 255, 1);
+  border-left: 10px solid transparent;
+  margin-left: 0px;
+}
+.exportbtn__popup:before{
+    /* top: calc(100% - 5px); */
+    border-top: 11px solid transparent;
+    border-right: 11px solid transparent;
+    border-bottom: 11px solid rgba(30, 127, 217, 1);
+    border-left: 11px solid transparent;
+    margin-left: 0px;
+}

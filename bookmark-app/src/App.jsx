@@ -4,6 +4,7 @@ import Bookmark from "./components/Bookmark";
 import Popup from "./components/Popup";
 import { GoSearch } from "react-icons/go";
 import { FaPlus } from "react-icons/fa6";
+import ExportButton from "./components/ExportButton";
 
 function App() {
   const [popup, setPopup] = useState(false);
@@ -40,6 +41,7 @@ function App() {
       category: data.category,
     });
     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+    
     setBookmarks(bookmarks);
     if (data.category && !categories.includes(data.category)) {
       setCategories((prev) => [...prev, data.category]);
@@ -78,6 +80,7 @@ function App() {
             <FaPlus className="inline mr-1" size={20} />
             Add Link
           </button>
+          <ExportButton />
         </div>
       </div>
 
