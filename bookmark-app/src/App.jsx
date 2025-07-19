@@ -13,6 +13,7 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [bookmarks, setBookmarks] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState("active");
   
   const categories = [
     ...new Set(bookmarks.map((b) => b.category).filter(Boolean)),
@@ -32,9 +33,11 @@ function App() {
       results = fuse.search(searchQuery).map((result) => result.item);
     }
 
-    return results.filter((b) =>
+    results = results.filter((b) =>
       selectedCategory === "All" ? true : b.category === selectedCategory
     );
+
+    return results.filter((b) => (b.status || "active") === viewMode);
   })();
 
 
@@ -47,6 +50,7 @@ function App() {
       notes: data.notes ? data.notes : "",
       tags: data.tags ? data.tags.split(",").map((tag) => tag.trim()) : [],
       category: data.category,
+      status: "active",
     });
     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
     
@@ -77,6 +81,20 @@ function App() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
+          <div className="flex gap-2 justify-center mb-4">
+            {["active", "read-later", "archived"].map((mode) => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className={`px-3 py-1 rounded-md capitalize ${
+                  viewMode === mode ? "bg-blue-600 text-white" : "bg-gray-200"
+                }`}
+              >
+                {mode.replace("-", " ")}
+              </button>
+            ))}
+          </div>
+
           <button
             onClick={() => setPopup(true)}
             className="flex items-center bg-blue-500 text-white p-2 rounded cursor-pointer"
@@ -116,7 +134,12 @@ function App() {
           <p className="text-center text-gray-500">No bookmarks found.</p>
         ) : (
           filteredBookmarks.map((bookmark, index) => (
-            <Bookmark key={index} data={bookmark} />
+            <Bookmark
+              key={index}
+              data={bookmark}
+              bookmarks={bookmarks}
+              setBookmarks={setBookmarks}
+            />
           ))
         )}
       </div>
