@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { RxCross2 } from "react-icons/rx";
 
-const Popup = ({ data, setData, setPopup, addNewBookmark, categories, setCategories }) => {
+const Popup = ({ data, setData, setPopup, addNewBookmark, categories }) => {
   const [newCategory, setNewCategory] = useState("");
   const [showNewInput, setShowNewInput] = useState(false);
 
@@ -46,7 +46,7 @@ const Popup = ({ data, setData, setPopup, addNewBookmark, categories, setCategor
         <select
           value={data.category}
           onChange={(e) => {
-            if (e.target.value === "__new__") {
+            if (e.target.value === "newCustomCategory") {
               setShowNewInput(true);
             } else {
               setData({ ...data, category: e.target.value });
@@ -55,6 +55,11 @@ const Popup = ({ data, setData, setPopup, addNewBookmark, categories, setCategor
           className="border border-black p-2 rounded w-full text-black"
         >
           <option value="">Select Category</option>
+          {data.category &&
+            !categories.includes(data.category) &&
+            data.category !== "newCustomCategory" && (
+              <option value={data.category}>{data.category}</option>
+            )}
           {categories
             .filter((cat) => cat !== "All")
             .map((cat, i) => (
@@ -62,7 +67,7 @@ const Popup = ({ data, setData, setPopup, addNewBookmark, categories, setCategor
                 {cat}
               </option>
             ))}
-          <option value="__new__">+ Add New Category</option>
+          <option value="newCustomCategory">+ Add New Category</option>
         </select>
         {showNewInput && (
           <div className="flex gap-2">
@@ -77,9 +82,6 @@ const Popup = ({ data, setData, setPopup, addNewBookmark, categories, setCategor
               className="bg-blue-600 text-white px-3 py-2 rounded-md"
               onClick={() => {
                 const trimmed = newCategory.trim();
-                if (trimmed && !categories.includes(trimmed)) {
-                  setCategories((prev) => [...prev, trimmed]);
-                }
                 setData({ ...data, category: trimmed });
                 setNewCategory("");
                 setShowNewInput(false);

@@ -11,9 +11,11 @@ function App() {
   const [data, setData] = useState({});
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [bookmarks, setBookmarks] = useState([]);
-  const [categories, setCategories] = useState(["Work", "Personal"]);
   const [searchQuery, setSearchQuery] = useState("");
-
+  
+  const categories = [
+    ...new Set(bookmarks.map((b) => b.category).filter(Boolean)),
+  ];
 
   const filteredBookmarks = bookmarks.filter((b) => {
     const inCategory =
@@ -42,10 +44,6 @@ function App() {
     });
     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
     
-    setBookmarks(bookmarks);
-    if (data.category && !categories.includes(data.category)) {
-      setCategories((prev) => [...prev, data.category]);
-    }
     setData({});
     setPopup(false);
   };
@@ -120,7 +118,6 @@ function App() {
           setPopup={setPopup}
           addNewBookmark={addNewBookmark}
           categories={categories}
-          setCategories={setCategories}
         />
       )}
     </section>

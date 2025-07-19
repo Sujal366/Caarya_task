@@ -14,7 +14,7 @@ const Bookmark = ({ data }) => {
 
   return (
     <div
-      className={`flex flex-col items-start justify-between p-4 bg-white text-black rounded-lg w-full h-[110px] relative`}
+      className={`flex flex-col items-start justify-between p-4 bg-white text-black rounded-lg w-full relative`}
     >
     {!confirmDelete ?  (
     <div className='w-full' onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
@@ -26,7 +26,7 @@ const Bookmark = ({ data }) => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Title: {data.title}
+            {data.title}
           </a>
           {data.notes && (
             <p className="font-semibold text-sm text-gray-400">
@@ -59,13 +59,13 @@ const Bookmark = ({ data }) => {
       <p className="text-red-500 font-semibold mb-2">Are you sure you want to delete this bookmark?</p>
       <div className="flex gap-2">
         <button
-          className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-md cursor-pointer"
+          className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-md cursor-pointer text-sm"
           onClick={deleteBookmark}
         >
           Yes, Delete
         </button>
         <button
-          className="bg-gray-400 hover:bg-gray-200 text-black px-4 py-2 rounded-md cursor-pointer"
+          className="bg-gray-400 hover:bg-gray-200 text-black px-4 py-2 rounded-md cursor-pointer text-sm"
           onClick={() => setConfirmDelete(false)}
         >
           Cancel
