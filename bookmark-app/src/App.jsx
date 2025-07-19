@@ -5,6 +5,7 @@ import Popup from "./components/Popup";
 import { GoSearch } from "react-icons/go";
 import { FaPlus } from "react-icons/fa6";
 import ExportButton from "./components/ExportButton";
+import Fuse from "fuse.js";
 
 function App() {
   const [popup, setPopup] = useState(false);
@@ -17,19 +18,24 @@ function App() {
     ...new Set(bookmarks.map((b) => b.category).filter(Boolean)),
   ];
 
-  const filteredBookmarks = bookmarks.filter((b) => {
-    const inCategory =
-      selectedCategory === "All" || b.category === selectedCategory;
+  const fuseOptions = {
+    keys: ["title", "notes", "tags"],
+    threshold: 0.4,
+  };
 
-    const matchesSearch =
-      b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.notes.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (b.tags || []).some((tag) =>
-        tag.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+  const fuse = new Fuse(bookmarks, fuseOptions);
 
-    return inCategory && matchesSearch;
-  });
+  const filteredBookmarks = (() => {
+    let results = bookmarks;
+
+    if (searchQuery.trim()) {
+      results = fuse.search(searchQuery).map((result) => result.item);
+    }
+
+    return results.filter((b) =>
+      selectedCategory === "All" ? true : b.category === selectedCategory
+    );
+  })();
 
 
   const addNewBookmark = () => {
@@ -101,6 +107,11 @@ function App() {
 
       {/* // Bookmark List Section */}
       <div className="w-full max-w-4xl px-4 grid gap-4">
+        {searchQuery && (
+          <p className="text-center text-sm text-gray-500 mb-2">
+            Showing results for: <strong>{searchQuery}</strong>
+          </p>
+        )}
         {filteredBookmarks.length === 0 ? (
           <p className="text-center text-gray-500">No bookmarks found.</p>
         ) : (
