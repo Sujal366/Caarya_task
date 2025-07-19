@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { MdDeleteOutline, MdOutlineBookmark } from "react-icons/md";
 
-const Bookmark = ({ data, bookmarks, setBookmarks }) => {
+const Bookmark = ({ data, bookmarks, setBookmarks, viewModes }) => {
     const [hovered, setHovered] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
+    const [showViewMenu, setShowViewMenu] = useState(false);
 
     const deleteBookmark = () => {
         const bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
@@ -53,25 +54,41 @@ const Bookmark = ({ data, bookmarks, setBookmarks }) => {
           </div>
           {hovered && (
             <div className="flex items-center gap-2 absolute bottom-2 right-2">
-              <select
-                value={data.status}
-                onChange={(e) => {
-                  const updated = { ...data, status: e.target.value };
-                  const updatedBookmarks = bookmarks.map((b) =>
-                    b.url === data.url ? updated : b
-                  );
-                  localStorage.setItem(
-                    "bookmarks",
-                    JSON.stringify(updatedBookmarks)
-                  );
-                  setBookmarks(updatedBookmarks);
-                }}
-                className="mt-2 border rounded px-2 py-1 text-sm"
+              <div
+                className="relative"
+                onMouseEnter={() => setShowViewMenu(true)}
+                onMouseLeave={() => setShowViewMenu(false)}
               >
-                <option value="active">Active</option>
-                <option value="read-later">Read Later</option>
-                <option value="archived">Archived</option>
-              </select>
+                <MdOutlineBookmark
+                  className="text-blue-400 rounded-full cursor-pointer"
+                  size={20}
+                />
+                {showViewMenu && (
+                  <div className="absolute right-0 top-full w-27 bg-white rounded-md p-2 shadow-lg flex flex-col items-start z-10 border border-gray-300">
+                    {viewModes.map((mode, index) => (
+                      <p
+                        key={index}
+                        className={`cursor-pointer hover:bg-gray-200 w-full text-start p-2 rounded-md ${
+                          data.status === mode ? "bg-gray-200" : ""
+                        }`}
+                        onClick={() => {
+                          const updated = { ...data, status: mode };
+                          const updatedBookmarks = bookmarks.map((b) =>
+                            b.url === data.url ? updated : b
+                          );
+                          localStorage.setItem(
+                            "bookmarks",
+                            JSON.stringify(updatedBookmarks)
+                          );
+                          setBookmarks(updatedBookmarks);
+                        }}
+                      >
+                        {mode.charAt(0).toUpperCase() + mode.slice(1).replace("-", " ")}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               <MdDeleteOutline
                 className="text-red-400 rounded-full cursor-pointer"

@@ -102,7 +102,18 @@ const Popup = ({ data, setData, setPopup, addNewBookmark, categories }) => {
       </form>
 
       <button
-        onClick={() => setPopup(false)}
+        onClick={() => {
+          setPopup(false);
+          setData({
+            title: "",
+            url: "",
+            notes: "",
+            tags: "",
+            category: "All",
+          });
+          setNewCategory("");
+          setShowNewInput(false);
+        }}
         className="mt-2 text-red-500 hover:bg-red-100 p-2 rounded-full absolute top-2 right-2 cursor-pointer"
       >
         <RxCross2 />

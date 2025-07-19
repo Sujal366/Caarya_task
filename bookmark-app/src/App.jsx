@@ -26,6 +26,8 @@ function App() {
 
   const fuse = new Fuse(bookmarks, fuseOptions);
 
+  const viewModes = ["active", "read-later", "archived"];
+
   const filteredBookmarks = (() => {
     let results = bookmarks;
 
@@ -42,6 +44,10 @@ function App() {
 
 
   const addNewBookmark = () => {
+    if (!data.title || !data.url) {
+      alert("Title and URL are required fields.");
+      return;
+    }
     const bookmarkData = localStorage.getItem("bookmarks");
     let bookmarks = bookmarkData ? JSON.parse(bookmarkData) : [];
     bookmarks.push({
@@ -49,11 +55,12 @@ function App() {
       url: data.url,
       notes: data.notes ? data.notes : "",
       tags: data.tags ? data.tags.split(",").map((tag) => tag.trim()) : [],
-      category: data.category,
+      category: data.category ? data.category : "All",
       status: "active",
     });
     localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
     
+    setBookmarks(bookmarks);
     setData({});
     setPopup(false);
   };
@@ -81,19 +88,13 @@ function App() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="flex gap-2 justify-center mb-4">
-            {["active", "read-later", "archived"].map((mode) => (
-              <button
-                key={mode}
-                onClick={() => setViewMode(mode)}
-                className={`px-3 py-1 rounded-md capitalize ${
-                  viewMode === mode ? "bg-blue-600 text-white" : "bg-gray-200"
-                }`}
-              >
-                {mode.replace("-", " ")}
-              </button>
-            ))}
-          </div>
+          <button
+          onClick={()=>{
+            const nextIndex = (viewModes.indexOf(viewMode)+1) %viewModes.length;
+            setViewMode(viewModes[nextIndex]);
+          }}
+          className="bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer"
+          >{viewMode.charAt(0).toUpperCase() + viewMode.slice(1).replace("-", " ")}</button>
 
           <button
             onClick={() => setPopup(true)}
@@ -139,6 +140,7 @@ function App() {
               data={bookmark}
               bookmarks={bookmarks}
               setBookmarks={setBookmarks}
+              viewModes={viewModes}
             />
           ))
         )}
