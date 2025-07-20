@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
 import { MdDeleteOutline, MdOutlineBookmark } from "react-icons/md";
+import { CiEdit } from "react-icons/ci";
 
 const Bookmark = ({ data, bookmarks, setBookmarks, viewModes }) => {
     const [hovered, setHovered] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [showViewMenu, setShowViewMenu] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [newData, setNewData] = useState(data);
+    
 
     const deleteBookmark = () => {
         const bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
@@ -13,91 +17,181 @@ const Bookmark = ({ data, bookmarks, setBookmarks, viewModes }) => {
         window.location.reload();
     }
 
+    const saveChanges = () => {
+        const bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
+        const updatedBookmarks = bookmarks.map(bookmark =>
+            bookmark.url === data.url ? newData : bookmark
+        );
+        localStorage.setItem("bookmarks", JSON.stringify(updatedBookmarks));
+        setBookmarks(updatedBookmarks);
+        setIsEditing(false);
+    };
+
   return (
     <div
       className={`flex flex-col items-start justify-between p-4 bg-white text-black rounded-lg w-full relative`}
     >
       {!confirmDelete ? (
-        <div
-          className="w-full"
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-        >
-          <div className="flex w-full items-center justify-between">
-            <div className="flex flex-col items-start">
-              <a
-                href={data.url}
-                className="font-semibold text-lg text-blue-400 hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {data.title}
-              </a>
-              {data.notes && (
-                <p className="font-semibold text-sm text-gray-400">
-                  Notes: {data.notes}
-                </p>
-              )}
-            </div>
-            <p className="font-semibold text-sm text-gray-400">
-              {data.category}
-            </p>
-          </div>
-          <div className="flex items-center justify-between w-full">
-            <div className="flex flex-wrap gap-1 mt-2 text-xs text-gray-600">
-              {data.tags.map((tag, idx) => (
-                <span key={idx} className="bg-gray-200 px-2 py-1 rounded-full">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          </div>
-          {hovered && (
-            <div className="flex items-center gap-2 absolute bottom-2 right-2">
-              <div
-                className="relative"
-                onMouseEnter={() => setShowViewMenu(true)}
-                onMouseLeave={() => setShowViewMenu(false)}
-              >
-                <MdOutlineBookmark
-                  className="text-blue-400 rounded-full cursor-pointer"
-                  size={20}
-                />
-                {showViewMenu && (
-                  <div className="absolute right-0 top-full w-27 bg-white rounded-md p-2 shadow-lg flex flex-col items-start z-10 border border-gray-300">
-                    {viewModes.map((mode, index) => (
-                      <p
-                        key={index}
-                        className={`cursor-pointer hover:bg-gray-200 w-full text-start p-2 rounded-md ${
-                          data.status === mode ? "bg-gray-200" : ""
-                        }`}
-                        onClick={() => {
-                          const updated = { ...data, status: mode };
-                          const updatedBookmarks = bookmarks.map((b) =>
-                            b.url === data.url ? updated : b
-                          );
-                          localStorage.setItem(
-                            "bookmarks",
-                            JSON.stringify(updatedBookmarks)
-                          );
-                          setBookmarks(updatedBookmarks);
-                        }}
-                      >
-                        {mode.charAt(0).toUpperCase() + mode.slice(1).replace("-", " ")}
-                      </p>
-                    ))}
-                  </div>
+        !isEditing ? (
+          <div
+            className="w-full"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+          >
+            <div className="flex w-full items-center justify-between">
+              <div className="flex flex-col items-start">
+                <a
+                  href={data.url}
+                  className="font-semibold text-lg text-blue-400 hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {data.title}
+                </a>
+                {data.notes && (
+                  <p className="font-semibold text-sm text-gray-400">
+                    Notes: {data.notes}
+                  </p>
                 )}
               </div>
+              <p className="font-semibold text-sm text-gray-400">
+                {data.category}
+              </p>
+            </div>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex flex-wrap gap-1 mt-2 text-xs text-gray-600">
+                {data.tags.map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className="bg-gray-200 px-2 py-1 rounded-full"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+            {hovered && (
+              <div className="flex items-center gap-2 absolute bottom-2 right-2">
+                <CiEdit
+                  className="text-blue-400 rounded-full cursor-pointer"
+                  size={20}
+                  onClick={() => setIsEditing(true)}
+                />
+                <div
+                  className="relative"
+                  onMouseEnter={() => setShowViewMenu(true)}
+                  onMouseLeave={() => setShowViewMenu(false)}
+                >
+                  <MdOutlineBookmark
+                    className="text-blue-400 rounded-full cursor-pointer"
+                    size={20}
+                  />
+                  {showViewMenu && (
+                    <div className="absolute right-0 top-full w-27 bg-white rounded-md p-2 shadow-lg flex flex-col items-start z-10 border border-gray-300">
+                      {viewModes.map((mode, index) => (
+                        <p
+                          key={index}
+                          className={`cursor-pointer hover:bg-gray-200 w-full text-start p-2 rounded-md ${
+                            data.status === mode ? "bg-gray-200" : ""
+                          }`}
+                          onClick={() => {
+                            const updated = { ...data, status: mode };
+                            const updatedBookmarks = bookmarks.map((b) =>
+                              b.url === data.url ? updated : b
+                            );
+                            localStorage.setItem(
+                              "bookmarks",
+                              JSON.stringify(updatedBookmarks)
+                            );
+                            setBookmarks(updatedBookmarks);
+                          }}
+                        >
+                          {mode.charAt(0).toUpperCase() +
+                            mode.slice(1).replace("-", " ")}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-              <MdDeleteOutline
-                className="text-red-400 rounded-full cursor-pointer"
-                size={20}
-                onClick={() => setConfirmDelete(true)}
+                <MdDeleteOutline
+                  className="text-red-400 rounded-full cursor-pointer"
+                  size={20}
+                  onClick={() => setConfirmDelete(true)}
+                />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="w-full">
+            <div className="flex w-full items-center justify-between">
+              <div className="flex flex-col items-start gap-1">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newData.title}
+                    className="font-semibold text-lg bg-transparent border border-black p-1 focus:outline-none"
+                    onChange={(e) =>
+                      setNewData({ ...newData, title: e.target.value })
+                    }
+                  />
+                  <input
+                    type="url"
+                    value={newData.url}
+                    className="font-semibold italic underline text-lg text-blue-400 bg-transparent border border-black p-1 focus:outline-none"
+                    onChange={(e) =>
+                      setNewData({ ...newData, url: e.target.value })
+                    }
+                  />
+                </div>
+                {newData.notes && (
+                  <input
+                    type="text"
+                    className="font-semibold text-sm text-gray-400 bg-transparent border border-black p-1 focus:outline-none"
+                    value={newData.notes}
+                    onChange={(e) =>
+                      setNewData({ ...newData, notes: e.target.value })
+                    }
+                  />
+                )}
+              </div>
+              <input
+                type="text"
+                className="font-semibold text-sm text-gray-400 bg-transparent border border-black p-1 focus:outline-none"
+                value={newData.category}
+                onChange={(e) =>
+                  setNewData({ ...newData, category: e.target.value })
+                }
               />
             </div>
-          )}
-        </div>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex flex-wrap gap-1 mt-2 text-xs text-gray-600">
+                <input
+                  type="text"
+                  className="font-semibold text-sm text-gray-400 bg-transparent border border-black p-1 focus:outline-none"
+                  value={newData.tags.join(", ")}
+                  onChange={(e) =>
+                    setNewData({ ...newData, tags: e.target.value.split(", ") })
+                  }
+                />
+              </div>
+              <div className="flex items-center">
+                <button
+                  className="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-md cursor-pointer text-sm"
+                  onClick={saveChanges}
+                >
+                  Save
+                </button>
+                <button
+                  className="bg-gray-400 hover:bg-gray-200 text-black px-4 py-2 rounded-md cursor-pointer text-sm ml-2"
+                  onClick={() => setIsEditing(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )
       ) : (
         <div className="flex flex-col items-center justify-center bg-white text-black rounded-lg w-full">
           <p className="text-red-500 font-semibold mb-2">
