@@ -124,13 +124,13 @@ const Bookmark = ({ data, bookmarks, setBookmarks, viewModes }) => {
           </div>
         ) : (
           <div className="w-full">
-            <div className="flex w-full items-center justify-between">
-              <div className="flex flex-col items-start gap-1">
-                <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row w-full md:items-center justify-between gap-1">
+              <div className="flex flex-col items-start gap-1 w-full">
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-2 w-full">
                   <input
                     type="text"
                     value={newData.title}
-                    className="font-semibold text-lg bg-transparent border border-black p-1 focus:outline-none"
+                    className="font-semibold text-lg bg-transparent border border-black p-1 focus:outline-none w-full md:w-auto"
                     onChange={(e) =>
                       setNewData({ ...newData, title: e.target.value })
                     }
@@ -138,7 +138,7 @@ const Bookmark = ({ data, bookmarks, setBookmarks, viewModes }) => {
                   <input
                     type="url"
                     value={newData.url}
-                    className="font-semibold italic underline text-lg text-blue-400 bg-transparent border border-black p-1 focus:outline-none"
+                    className="font-semibold italic underline text-lg text-blue-400 bg-transparent border border-black p-1 focus:outline-none w-full md:w-auto"
                     onChange={(e) =>
                       setNewData({ ...newData, url: e.target.value })
                     }
@@ -147,7 +147,7 @@ const Bookmark = ({ data, bookmarks, setBookmarks, viewModes }) => {
                 {newData.notes && (
                   <input
                     type="text"
-                    className="font-semibold text-sm text-gray-400 bg-transparent border border-black p-1 focus:outline-none"
+                    className="font-semibold text-sm text-gray-400 bg-transparent border border-black p-1 focus:outline-none w-full md:w-auto"
                     value={newData.notes}
                     onChange={(e) =>
                       setNewData({ ...newData, notes: e.target.value })
@@ -157,18 +157,18 @@ const Bookmark = ({ data, bookmarks, setBookmarks, viewModes }) => {
               </div>
               <input
                 type="text"
-                className="font-semibold text-sm text-gray-400 bg-transparent border border-black p-1 focus:outline-none"
+                className="font-semibold text-sm text-gray-400 bg-transparent border border-black p-1 focus:outline-none w-full md:w-auto"
                 value={newData.category}
                 onChange={(e) =>
                   setNewData({ ...newData, category: e.target.value })
                 }
               />
             </div>
-            <div className="flex items-center justify-between w-full">
-              <div className="flex flex-wrap gap-1 mt-2 text-xs text-gray-600">
+            <div className="flex flex-col md:flex-row items-center justify-between w-full gap-2">
+              <div className="flex flex-wrap gap-1 mt-2 text-xs text-gray-600 w-full">
                 <input
                   type="text"
-                  className="font-semibold text-sm text-gray-400 bg-transparent border border-black p-1 focus:outline-none"
+                  className="font-semibold text-sm text-gray-400 bg-transparent border border-black p-1 focus:outline-none w-full md:w-auto"
                   value={newData.tags.join(", ")}
                   onChange={(e) =>
                     setNewData({ ...newData, tags: e.target.value.split(", ") })

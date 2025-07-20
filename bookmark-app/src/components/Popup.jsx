@@ -6,7 +6,7 @@ const Popup = ({ data, setData, setPopup, addNewBookmark, categories }) => {
   const [showNewInput, setShowNewInput] = useState(false);
 
   return (
-    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 shadow-lg  rounded-lg w-96 h-auto">
+    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 shadow-lg  rounded-lg w-76 md:w-96 h-auto">
       <h2 className="text-xl font-semibold text-blue-400">Add Bookmark</h2>
       <form
         className="flex flex-col justify-start mt-4 gap-2"
