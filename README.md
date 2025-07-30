@@ -1,6 +1,6 @@
-# 📚 Caarya Task - Bookmark Manager App
+# 📚 Bookmark Manager App
 
-A simple React + Vite application to manage and organize bookmarks efficiently, developed as part of a task from Caarya.
+A simple React + Vite application to manage and organize bookmarks efficiently.
 
 ---
 
